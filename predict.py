@@ -25,5 +25,5 @@ def predict(file):
     
 
 
-#print(predict('teni2.jpeg'))
+print(predict('tenis1.jpeg'))
 

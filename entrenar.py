@@ -12,8 +12,8 @@ import scipy
 
 K.clear_session() 
  
-train_rut = './train' 
-test_rut = './test'
+train_rut = './train' #Ruta donde estan los dato de entranamiento
+val_rut = './test' # Ruta de los datos de validacion
 
 
 ## Parametros
@@ -51,7 +51,7 @@ imagen_train = train_datagen.flow_from_directory(
 
 
 imagen_test = test_datagen.flow_from_directory(
-    test_rut,
+    val_rut,
     target_size=(altura,longitud),
     batch_size= batch_size,
     class_mode='categorical'
