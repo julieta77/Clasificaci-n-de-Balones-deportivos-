@@ -1,29 +1,33 @@
+#############################################################################  Importando librerias ####################################################################################################################
+
 import numpy as np 
 import tensorflow as tf
 
 
 
+longitud, altura = 150,150 #Tiene que ser la misma altura y longitud que definimos en entrenar.py
 
-longitud, altura = 150,150
-modelo = './modelo/modelo.h5'
+modelo_rut = './modelo/modelo.h5' 
 pesos_modelo = './modelo/pesos.h5'
-cnn = tf.keras.models.load_model(modelo)
-cnn.load_weights(pesos_modelo) 
+
+modelo = tf.keras.models.load_model(modelo_rut) # Cargando el modelo
+modelo.load_weights(pesos_modelo) 
+
 
 def predict(file):
-    x = tf.keras.preprocessing.image.load_img(file, target_size=(longitud, altura))    #load_img(file, target_size=(longitud, altura))
-    x =  tf.keras.preprocessing.image.img_to_array(x)  #img_to_array(x)
-    x = np.expand_dims(x, axis=0)
-    array = cnn.predict(x)
+    """ Esta función el parámetro a pasar va a ser una imagen. Devuelve una predicción correspondiente a la imagen """
+
+    img = tf.keras.preprocessing.image.load_img(file, target_size=(longitud, altura))   
+    img =  tf.keras.preprocessing.image.img_to_array(img)  
+    img = np.expand_dims(img, axis=0)
+    array = modelo.predict(img)
     result = array[0]
     answer = np.argmax(result)
-    dicc = {'american_football': 0, 'baseball': 1, 'basketball': 2, 'billiard_ball': 3, 'bowling_ball': 4, 'cricket_ball': 5, 'football': 6, 'golf_ball': 7, 'hockey_ball': 8, 'hockey_puck': 9, 'rugby_ball': 10, 'shuttlecock': 11, 'table_tennis_ball': 12, 'tennis_ball': 13, 'volleyball': 14}
+    dicc = {'american_football': 0, 'baseball': 1, 'basketball': 2, 'billiard_ball': 3, 'bowling_ball': 4, 'cricket_ball': 5, 'football': 6, 'golf_ball': 7, 'hockey_ball': 8, 'hockey_puck': 9, 'rugby_ball': 10, 'table_tennis_ball': 11, 'tennis_ball': 12, 'volleyball': 13}
     for key, value in dicc.items():
         if value == answer:
             print(key)
-    return answer
+    return answer 
     
 
-
-print(predict('tenis1.jpeg'))
-
+#print(predict('volleyball.jpeg'))

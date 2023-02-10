@@ -1,8 +1,10 @@
+############################################################# Importando librerias ###########################################################################################################
+
 import sys
 import os
 from tensorflow.python.keras import optimizers
 from tensorflow.python.keras.models import Sequential
-from tensorflow.python.keras.layers import Dropout, Flatten, Dense, Activation
+from tensorflow.python.keras.layers import Dropout, Flatten, Dense
 from tensorflow.python.keras.layers import  Convolution2D, MaxPooling2D
 from tensorflow.python.keras import backend as K 
 import tensorflow as tf
@@ -12,11 +14,11 @@ import scipy
 
 K.clear_session() 
  
-train_rut = './train' #Ruta donde estan los dato de entranamiento
+train_rut = './train' # Ruta donde están los datos de entrenamiento
 val_rut = './test' # Ruta de los datos de validacion
 
 
-## Parametros
+######################################################################################## Parámetros #####################################################################################
 
 epocas = 10 
 altura, longitud  = 150 , 150
@@ -28,11 +30,10 @@ filtrosConv2 = 64
 tamano_filtro1 = (3,3)
 tamano_filtro2 = (2,2)
 tamano_pool= (2,2)
-clases = 15 
+clases = 14
 lr = 0.0004
 
-##p
-
+############################################################# Preprocesamiento de imágenes ############################################################################################3
 train_datagen = tf.keras.preprocessing.image.ImageDataGenerator(
     rescale= 1./255, 
     shear_range=0.2,
@@ -40,7 +41,7 @@ train_datagen = tf.keras.preprocessing.image.ImageDataGenerator(
     horizontal_flip =True
 )
 
-test_datagen = tf.keras.preprocessing.image.ImageDataGenerator(rescale= 1./255)
+val_datagen = tf.keras.preprocessing.image.ImageDataGenerator(rescale= 1./255)
 
 imagen_train = train_datagen.flow_from_directory(
     train_rut,
@@ -50,7 +51,7 @@ imagen_train = train_datagen.flow_from_directory(
 )
 
 
-imagen_test = test_datagen.flow_from_directory(
+imagen_val = val_datagen.flow_from_directory(
     val_rut,
     target_size=(altura,longitud),
     batch_size= batch_size,
@@ -58,46 +59,42 @@ imagen_test = test_datagen.flow_from_directory(
 )
 
 
-## red neuronal 
+###################################################### Creando la red neuronal convolucional ##############################################################################################3
 
 modelo = Sequential()
-
-#capa 1 
-
-modelo.add(Convolution2D(filtrosConv1,tamano_filtro1,input_shape=(longitud,altura,3),activation='relu'))
-
+modelo.add(Convolution2D(filtrosConv1,tamano_filtro1,input_shape=(longitud,altura,3),activation='relu')) 
 modelo.add(MaxPooling2D(pool_size=tamano_pool))
-
-modelo.add(Convolution2D(filtrosConv2,tamano_filtro2))
-
+modelo.add(Convolution2D(filtrosConv2,tamano_filtro2)) 
 modelo.add(MaxPooling2D(pool_size=tamano_pool))
-
 modelo.add(Flatten())
-
 modelo.add(Dense(180,activation='relu'))
 modelo.add(Dense(84,activation='relu'))
 modelo.add(Dropout(0.4))
 modelo.add(Dense(clases,activation='softmax'))
 
+
+################################################################### Compilar el modelo ###########################################################################################
 modelo.compile(loss='categorical_crossentropy',
             optimizer=optimizers.adam_v2.Adam(learning_rate=lr),
             metrics=['accuracy'])
 
 
+###########################################################  Entrenando la red neuronal convolucional #############################################################################
 modelo.fit(imagen_train,
         steps_per_epoch=pasos,
         epochs=epocas,
-        validation_data=imagen_test,
+        validation_data=imagen_val,
         validation_freq=pasos_validacion) 
 
 
-print(imagen_train.class_indices)
+#print(imagen_train.class_indices) 
 
-modelo_rut = './modelo/'
+
+modelo_rut = './modelo/' #Ruta de una carpeta llamada modelo y si no existe la crea para guardar el modelo
 if not os.path.exists(modelo_rut):
   os.mkdir(modelo_rut)
 
+########################################################################### Guardando el modelo      ################################################################################################################################3
 
 modelo.save('./modelo/modelo.h5')
 modelo.save_weights('./modelo/pesos.h5')
-
