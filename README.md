@@ -16,4 +16,4 @@ En el archivo entrenar.py estaremos preparando las imágenes, creando la red con
 
 En prediction.py tendrá una función que,  al pasar una imagen,  nos predecirá la etiqueta correspondiente 
 
-El set de datos lo puedes encontrar en Kaggle: [Link](https://www.kaggle.com/code/stpeteishii/sports-balls-classify-fastai/data)
+El set de datos lo puedes encontrar en Kaggle: [Link](https://www.kaggle.com/datasets/samuelcortinhas/sports-balls-multiclass-image-classification)
